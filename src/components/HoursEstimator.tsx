@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Info } from 'lucide-react'
 
 interface Props {
@@ -15,53 +16,93 @@ const BUFFER_OPTIONS = [
   { value: 50, label: 'Máximo', sublabel: '+50%' },
 ]
 
+const PRESETS = [20, 40, 80, 160]
+
 export function HoursEstimator({ hours, riskBuffer, onHoursChange, onBufferChange }: Props) {
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState('')
   const totalHours = hours * (1 + riskBuffer / 100)
+
+  const clamp = (v: number) => Math.min(2000, Math.max(1, v))
+
+  const commitDraft = () => {
+    const parsed = parseInt(draft)
+    if (!isNaN(parsed) && parsed > 0) onHoursChange(clamp(parsed))
+    setEditing(false)
+  }
 
   return (
     <div className="max-w-xl mx-auto">
       <h2 className="text-2xl sm:text-3xl font-bold text-white mb-1">Estimación de horas</h2>
       <p className="text-slate-400 text-sm mb-8">Cuántas horas crees que tomará el proyecto</p>
 
-      {/* Hours input */}
       <div className="mb-6">
         <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
           Horas estimadas
         </label>
-        <div className="flex gap-2">
+
+        <div className="flex items-center gap-3 mb-3">
           <button
-            onClick={() => onHoursChange(Math.max(1, hours - 10))}
-            className="w-12 h-14 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/[0.1] text-slate-300 text-2xl font-light hover:bg-white/[0.1] hover:border-white/20 active:scale-95 transition-all shrink-0 select-none"
+            onClick={() => onHoursChange(clamp(hours - 10))}
+            className="w-14 h-14 rounded-2xl bg-white/[0.05] border border-white/[0.1] text-slate-300 text-2xl font-light hover:bg-white/[0.1] hover:border-violet-500/50 active:scale-95 transition-all shrink-0 select-none"
           >
             −
           </button>
-          <div className="relative flex-1">
-            <input
-              type="number"
-              min={1}
-              max={2000}
-              value={hours || ''}
-              onChange={(e) => onHoursChange(Math.max(1, parseInt(e.target.value) || 0))}
-              placeholder="80"
-              className="w-full bg-white/[0.05] border border-white/[0.1] rounded-xl px-4 py-4 text-lg text-white text-center placeholder-slate-600 focus:outline-none focus:border-violet-500 transition-colors pr-14"
-            />
-            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">hrs</span>
+
+          <div
+            className="flex-1 h-14 flex items-center justify-center rounded-2xl bg-white/[0.05] border border-white/[0.1] cursor-text hover:border-violet-500/50 transition-all"
+            onClick={() => { setDraft(hours > 0 ? String(hours) : ''); setEditing(true) }}
+          >
+            {editing ? (
+              <input
+                autoFocus
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                value={draft}
+                onChange={(e) => setDraft(e.target.value.replace(/\D/g, ''))}
+                onBlur={commitDraft}
+                onKeyDown={(e) => e.key === 'Enter' && commitDraft()}
+                className="w-full bg-transparent text-center text-2xl font-bold text-white outline-none"
+              />
+            ) : (
+              <span className={`text-2xl font-bold ${hours > 0 ? 'text-white' : 'text-slate-600'}`}>
+                {hours > 0 ? hours : '—'}
+              </span>
+            )}
           </div>
+
           <button
-            onClick={() => onHoursChange(Math.min(2000, hours + 10))}
-            className="w-12 h-14 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/[0.1] text-slate-300 text-2xl font-light hover:bg-white/[0.1] hover:border-white/20 active:scale-95 transition-all shrink-0 select-none"
+            onClick={() => onHoursChange(clamp(hours + 10))}
+            className="w-14 h-14 rounded-2xl bg-white/[0.05] border border-white/[0.1] text-slate-300 text-2xl font-light hover:bg-white/[0.1] hover:border-violet-500/50 active:scale-95 transition-all shrink-0 select-none"
           >
             +
           </button>
         </div>
+
+        <div className="flex gap-2">
+          {PRESETS.map((p) => (
+            <button
+              key={p}
+              onClick={() => onHoursChange(p)}
+              className={`flex-1 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                hours === p
+                  ? 'border-violet-500 bg-violet-500/20 text-violet-300'
+                  : 'border-white/[0.08] bg-white/[0.03] text-slate-500 hover:border-white/20 hover:text-slate-300'
+              }`}
+            >
+              {p}h
+            </button>
+          ))}
+        </div>
+
         {hours > 0 && riskBuffer > 0 && (
-          <p className="text-xs text-slate-500 mt-2">
+          <p className="text-xs text-slate-500 mt-3">
             Total con buffer: <span className="text-violet-400 font-semibold">{totalHours.toFixed(1)}h</span>
           </p>
         )}
       </div>
 
-      {/* Buffer section */}
       <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-5">
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -95,7 +136,6 @@ export function HoursEstimator({ hours, riskBuffer, onHoursChange, onBufferChang
         </div>
       </div>
 
-      {/* Tip */}
       <div className="mt-4 flex gap-3 p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
         <Info size={16} className="text-amber-400 shrink-0 mt-0.5" />
         <p className="text-xs text-slate-300 italic leading-relaxed">
