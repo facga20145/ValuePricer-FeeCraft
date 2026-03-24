@@ -23,7 +23,6 @@ const INITIAL_STATE: CalculatorState = {
   },
 }
 
-const STEP_LABELS = ['Proyecto', 'Horas', 'Valor', 'Resultado']
 
 export default function App() {
   const [state, setState] = useState<CalculatorState>(INITIAL_STATE)
@@ -113,11 +112,7 @@ export default function App() {
           )}
 
           <div className="bg-[#161922] border border-white/[0.06] rounded-3xl p-4 sm:p-8">
-            <ProgressBar
-              currentStep={currentStep}
-              totalSteps={4}
-              label={currentStep === 3 ? `PASO 4: ${STEP_LABELS[3].toUpperCase()}` : undefined}
-            />
+            <ProgressBar currentStep={currentStep} totalSteps={4} />
 
             <div key={currentStep} className="step-enter">
 
