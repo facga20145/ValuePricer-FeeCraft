@@ -1,6 +1,6 @@
 import type { ProjectType } from '../types'
 import { PROJECT_TYPES } from '../data/projectTypes'
-import { Monitor, ShoppingCart, LayoutDashboard, Terminal, TrendingUp, Smartphone } from 'lucide-react'
+import { Monitor, ShoppingCart, LayoutDashboard, Terminal, TrendingUp, Smartphone, CheckCircle2 } from 'lucide-react'
 
 interface Props {
   selected: ProjectType | null
@@ -35,12 +35,15 @@ export function ProjectTypeSelector({ selected, onSelect }: Props) {
             <button
               key={type.id}
               onClick={() => onSelect(type)}
-              className={`text-left p-5 rounded-2xl border transition-all duration-200 ${
+              className={`relative text-left p-5 rounded-2xl border transition-all duration-200 active:scale-[0.98] ${
                 isSelected
-                  ? 'border-violet-500 bg-violet-500/10'
+                  ? 'border-violet-500 bg-violet-500/10 shadow-lg shadow-violet-500/10'
                   : 'border-white/[0.08] bg-white/[0.04] hover:border-white/20 hover:bg-white/[0.06]'
               }`}
             >
+              {isSelected && (
+                <CheckCircle2 size={16} className="absolute top-3 right-3 text-violet-400" />
+              )}
               <div className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center mb-4`}>
                 <Icon size={18} className={color} />
               </div>

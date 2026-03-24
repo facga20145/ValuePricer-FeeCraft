@@ -80,18 +80,15 @@ export function PriceSummary({ result, state, onSave }: Props) {
               <span>{formatCurrency(minPrice)}</span>
               <span>{formatCurrency(maxPrice)}</span>
             </div>
-            <div className="relative h-2 bg-white/10 rounded-full">
+            <div className="relative h-2 rounded-full overflow-visible" style={{ background: 'linear-gradient(to right, #4c1d95 0%, #7c3aed 50%, #4c1d95 100%)' }}>
+              <div className="absolute inset-0 bg-white/5 rounded-full" />
               <div
-                className="absolute inset-y-0 left-0 bg-violet-500/30 rounded-full transition-all"
-                style={{ width: `${rangePercent}%` }}
-              />
-              <div
-                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2"
+                className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-10"
                 style={{ left: `${rangePercent}%` }}
               >
                 <div className="relative">
-                  <div className="w-4 h-4 bg-violet-500 rounded-full border-2 border-white shadow-lg shadow-violet-500/40" />
-                  <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-violet-500 text-white text-xs font-bold px-2 py-0.5 rounded-md whitespace-nowrap">
+                  <div className="w-4 h-4 bg-violet-400 rounded-full border-2 border-white shadow-lg shadow-violet-500/50" />
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-violet-500 text-white text-xs font-bold px-2 py-0.5 rounded-md whitespace-nowrap shadow-lg">
                     {formatCurrency(suggestedPrice)}
                   </div>
                 </div>

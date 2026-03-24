@@ -28,17 +28,31 @@ export function HoursEstimator({ hours, riskBuffer, onHoursChange, onBufferChang
         <label className="block text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">
           Horas estimadas
         </label>
-        <div className="relative">
-          <input
-            type="number"
-            min={1}
-            max={2000}
-            value={hours || ''}
-            onChange={(e) => onHoursChange(Math.max(1, parseInt(e.target.value) || 0))}
-            placeholder="Ej: 80"
-            className="w-full bg-white/[0.05] border border-white/[0.1] rounded-xl px-4 py-4 text-lg text-white placeholder-slate-600 focus:outline-none focus:border-violet-500 transition-colors pr-16"
-          />
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">horas</span>
+        <div className="flex gap-2">
+          <button
+            onClick={() => onHoursChange(Math.max(1, hours - 10))}
+            className="w-12 h-14 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/[0.1] text-slate-300 text-2xl font-light hover:bg-white/[0.1] hover:border-white/20 active:scale-95 transition-all shrink-0 select-none"
+          >
+            −
+          </button>
+          <div className="relative flex-1">
+            <input
+              type="number"
+              min={1}
+              max={2000}
+              value={hours || ''}
+              onChange={(e) => onHoursChange(Math.max(1, parseInt(e.target.value) || 0))}
+              placeholder="80"
+              className="w-full bg-white/[0.05] border border-white/[0.1] rounded-xl px-4 py-4 text-lg text-white text-center placeholder-slate-600 focus:outline-none focus:border-violet-500 transition-colors pr-14"
+            />
+            <span className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">hrs</span>
+          </div>
+          <button
+            onClick={() => onHoursChange(Math.min(2000, hours + 10))}
+            className="w-12 h-14 flex items-center justify-center rounded-xl bg-white/[0.05] border border-white/[0.1] text-slate-300 text-2xl font-light hover:bg-white/[0.1] hover:border-white/20 active:scale-95 transition-all shrink-0 select-none"
+          >
+            +
+          </button>
         </div>
         {hours > 0 && riskBuffer > 0 && (
           <p className="text-xs text-slate-500 mt-2">

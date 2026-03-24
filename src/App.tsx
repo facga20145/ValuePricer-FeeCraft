@@ -119,10 +119,15 @@ export default function App() {
               label={currentStep === 3 ? `PASO 4: ${STEP_LABELS[3].toUpperCase()}` : undefined}
             />
 
+            <div key={currentStep} className="step-enter">
+
             {currentStep === 0 && (
               <ProjectTypeSelector
                 selected={state.projectType}
-                onSelect={(type: ProjectType) => setState((s) => ({ ...s, projectType: type }))}
+                onSelect={(type: ProjectType) => {
+                  setState((s) => ({ ...s, projectType: type }))
+                  setTimeout(() => setCurrentStep(1), 320)
+                }}
               />
             )}
 
@@ -147,9 +152,11 @@ export default function App() {
             {currentStep === 3 && result && (
               <PriceSummary result={result} state={state} onSave={handleSave} />
             )}
+
+            </div>
           </div>
 
-          <div className="flex items-center justify-between mt-6 px-1">
+          <div className="flex items-center justify-between mt-6 px-1 pb-24 sm:pb-0">
             {currentStep > 0 ? (
               <button
                 onClick={() => setCurrentStep((s) => s - 1)}
@@ -179,6 +186,36 @@ export default function App() {
               <button
                 onClick={reset}
                 className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.06] text-slate-300 text-sm font-semibold hover:bg-white/[0.1] transition-all"
+              >
+                Nueva cotización
+              </button>
+            )}
+          </div>
+
+          <div className="fixed sm:hidden bottom-0 left-0 right-0 px-4 pb-6 pt-3 bg-[#0f1117]/90 backdrop-blur border-t border-white/[0.06] flex items-center justify-between gap-3 z-50">
+            {currentStep > 0 ? (
+              <button
+                onClick={() => setCurrentStep((s) => s - 1)}
+                className="flex items-center gap-2 px-5 py-3 rounded-full bg-white/[0.06] text-slate-300 text-sm font-medium hover:bg-white/[0.1] transition-all"
+              >
+                <ArrowLeft size={16} />
+                Atrás
+              </button>
+            ) : <div />}
+
+            {currentStep < 3 ? (
+              <button
+                onClick={() => setCurrentStep((s) => s + 1)}
+                disabled={!canAdvance()}
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-violet-500 text-white text-sm font-semibold hover:bg-violet-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+              >
+                Siguiente
+                <ArrowRight size={16} />
+              </button>
+            ) : (
+              <button
+                onClick={reset}
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white/[0.06] text-slate-300 text-sm font-semibold hover:bg-white/[0.1] transition-all"
               >
                 Nueva cotización
               </button>
