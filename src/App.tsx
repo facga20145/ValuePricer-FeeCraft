@@ -65,7 +65,7 @@ export default function App() {
         completedSteps={completedSteps}
       />
 
-      <main className="flex-1 px-4 py-8">
+      <main className="flex-1 px-3 sm:px-4 py-4 sm:py-8">
         <div className="max-w-4xl mx-auto">
 
           {history.length > 0 && (
@@ -111,7 +111,7 @@ export default function App() {
             </div>
           )}
 
-          <div className="bg-white/[0.03] backdrop-blur-sm border border-white/[0.08] rounded-3xl p-4 sm:p-8" style={{ boxShadow: '0 0 60px rgba(109,40,217,0.08), inset 0 1px 0 rgba(255,255,255,0.06)' }}>
+          <div className="bg-white/[0.03] backdrop-blur-sm border border-white/[0.08] rounded-2xl sm:rounded-3xl p-3 sm:p-6 lg:p-8" style={{ boxShadow: '0 0 60px rgba(109,40,217,0.08), inset 0 1px 0 rgba(255,255,255,0.06)' }}>
             <ProgressBar currentStep={currentStep} totalSteps={4} />
 
             <div key={currentStep} className="step-enter">
