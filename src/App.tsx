@@ -58,7 +58,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f1117] flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(109,40,217,0.25) 0%, #0f1117 60%)' }}>
       <TopNav
         currentStep={currentStep}
         onStepClick={setCurrentStep}
@@ -111,7 +111,7 @@ export default function App() {
             </div>
           )}
 
-          <div className="bg-[#161922] border border-white/[0.06] rounded-3xl p-4 sm:p-8">
+          <div className="bg-white/[0.03] backdrop-blur-sm border border-white/[0.08] rounded-3xl p-4 sm:p-8" style={{ boxShadow: '0 0 60px rgba(109,40,217,0.08), inset 0 1px 0 rgba(255,255,255,0.06)' }}>
             <ProgressBar currentStep={currentStep} totalSteps={4} />
 
             <div key={currentStep} className="step-enter">
