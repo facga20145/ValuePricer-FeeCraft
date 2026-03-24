@@ -8,10 +8,21 @@ const STEPS = ['Proyecto', 'Horas', 'Valor', 'Resultado']
 
 export function TopNav({ currentStep, onStepClick, completedSteps }: Props) {
   return (
-    <nav className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-white/5">
-      <span className="text-white font-bold text-base sm:text-lg tracking-tight">ValuePricer</span>
+    <nav
+      className="flex items-center justify-between px-4 sm:px-8 py-4"
+      style={{
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        background: 'rgba(8,8,8,0.85)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        position: 'sticky',
+        top: 0,
+        zIndex: 40,
+      }}
+    >
+      <span className="text-white font-semibold text-sm tracking-tight">ValuePricer</span>
 
-      <div className="hidden sm:flex items-center gap-4 lg:gap-6">
+      <div className="hidden sm:flex items-center gap-0.5">
         {STEPS.map((label, i) => {
           const isActive = i === currentStep
           const isAccessible = i === 0 || completedSteps.includes(i - 1)
@@ -20,12 +31,13 @@ export function TopNav({ currentStep, onStepClick, completedSteps }: Props) {
               key={i}
               onClick={() => isAccessible && onStepClick(i)}
               disabled={!isAccessible}
-              className={`text-sm font-medium pb-1 transition-all border-b-2 ${
+              style={{ transition: 'all 0.15s ease' }}
+              className={`text-xs px-3 py-1.5 rounded-lg font-medium ${
                 isActive
-                  ? 'text-violet-400 border-violet-400'
+                  ? 'text-white bg-white/[0.07]'
                   : isAccessible
-                  ? 'text-slate-400 border-transparent hover:text-slate-200'
-                  : 'text-slate-600 border-transparent cursor-not-allowed'
+                  ? 'text-[#444] hover:text-[#888] hover:bg-white/[0.03]'
+                  : 'text-[#222] cursor-not-allowed'
               }`}
             >
               {label}
@@ -34,20 +46,17 @@ export function TopNav({ currentStep, onStepClick, completedSteps }: Props) {
         })}
       </div>
 
-      <div className="flex sm:hidden items-center gap-1.5">
+      <div className="flex sm:hidden items-center gap-2">
         {STEPS.map((_, i) => (
           <div
             key={i}
-            className={`h-1.5 rounded-full transition-all ${
-              i === currentStep
-                ? 'w-5 bg-violet-400'
-                : i < currentStep
-                ? 'w-2 bg-violet-600'
-                : 'w-2 bg-white/10'
+            style={{ transition: 'all 0.3s ease' }}
+            className={`h-px rounded-full ${
+              i === currentStep ? 'w-6 bg-white' : i < currentStep ? 'w-3 bg-white/30' : 'w-3 bg-white/10'
             }`}
           />
         ))}
-        <span className="ml-2 text-xs text-slate-400 font-medium">{STEPS[currentStep]}</span>
+        <span className="ml-1 text-[11px] text-[#444] font-medium">{STEPS[currentStep]}</span>
       </div>
     </nav>
   )

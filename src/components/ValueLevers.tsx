@@ -1,4 +1,3 @@
-import { TrendingUp } from 'lucide-react'
 import type { ValueLevers as ValueLeversType } from '../types'
 import { formatCurrency } from '../utils/calculator'
 
@@ -13,7 +12,7 @@ const LEVERS = [
   {
     key: 'businessImpact' as const,
     label: 'Impacto al negocio',
-    description: '¿Cuánto dinero genera o ahorra este proyecto al cliente?',
+    description: '¿Cuánto dinero genera o ahorra este proyecto?',
     low: 'Bajo', mid: 'Moderado', high: 'Alto',
   },
   {
@@ -31,17 +30,13 @@ const LEVERS = [
   {
     key: 'exclusivity' as const,
     label: 'Exclusividad',
-    description: '¿Puede cualquiera hacer esto o eres la persona indicada?',
+    description: '¿Puede cualquiera hacer esto o eres tú el indicado?',
     low: 'Cualquiera', mid: 'Especializado', high: 'Solo tú',
   },
 ]
 
-const BADGE: Record<number, { label: string; color: string }> = {
-  1: { label: 'Muy bajo',    color: 'bg-slate-600 text-slate-300' },
-  2: { label: 'Bajo',        color: 'bg-slate-500/80 text-slate-200' },
-  3: { label: 'Equilibrado', color: 'bg-violet-600/70 text-violet-200' },
-  4: { label: 'Alto',        color: 'bg-violet-600 text-white' },
-  5: { label: 'Máximo',      color: 'bg-violet-500 text-white' },
+const LEVEL_LABEL: Record<number, string> = {
+  1: 'Muy bajo', 2: 'Bajo', 3: 'Equilibrado', 4: 'Alto', 5: 'Máximo',
 }
 
 export function ValueLevers({ levers, onChange, previewPrice, valueMultiplier }: Props) {
@@ -50,27 +45,29 @@ export function ValueLevers({ levers, onChange, previewPrice, valueMultiplier }:
   }
 
   return (
-    <div className="max-w-xl mx-auto">
-      <h2 className="text-2xl sm:text-3xl font-bold text-white mb-1 text-center">¿Cuánto valor entregas?</h2>
-      <p className="text-slate-400 text-sm mb-6 sm:mb-8 text-center">
-        Estos factores ajustan el precio más allá del tiempo invertido para capturar el valor real de tu trabajo.
+    <div className="max-w-lg mx-auto">
+      <h2 className="text-2xl sm:text-3xl font-bold text-white mb-1.5 tracking-tight">Valor entregado</h2>
+      <p className="text-[#555] text-sm mb-8 font-light">
+        Ajusta el precio más allá del tiempo invertido.
       </p>
 
-      <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-5 space-y-6">
+      <div className="space-y-7">
         {LEVERS.map(({ key, label, description, low, mid, high }) => {
           const val = levers[key]
-          const badge = BADGE[val]
           const fillPct = ((val - 1) / 4) * 100
 
           return (
             <div key={key}>
-              <div className="flex justify-between items-center mb-3">
+              <div className="flex justify-between items-baseline mb-3">
                 <div>
-                  <div className="text-sm font-semibold text-white">{label}</div>
-                  <div className="text-xs text-slate-500 mt-0.5 hidden sm:block">{description}</div>
+                  <span className="text-sm font-semibold text-[#ccc] tracking-tight">{label}</span>
+                  <span className="hidden sm:inline text-xs text-[#666] ml-2 font-light">{description}</span>
                 </div>
-                <span className={`text-xs font-semibold rounded-full px-2.5 py-0.5 shrink-0 ml-3 ${badge.color}`}>
-                  {badge.label}
+                <span
+                  className="text-xs text-[#777] shrink-0 ml-3 tabular-nums"
+                  style={{ transition: 'all 0.2s ease' }}
+                >
+                  {LEVEL_LABEL[val]}
                 </span>
               </div>
 
@@ -82,12 +79,13 @@ export function ValueLevers({ levers, onChange, previewPrice, valueMultiplier }:
                 value={val}
                 onChange={(e) => handleChange(key, parseInt(e.target.value))}
                 style={{
-                  background: `linear-gradient(to right, #7c3aed ${fillPct}%, #2d3148 ${fillPct}%)`,
+                  background: `linear-gradient(to right, rgba(255,255,255,0.8) ${fillPct}%, rgba(255,255,255,0.1) ${fillPct}%)`,
+                  transition: 'background 0.15s ease',
                 }}
                 className="w-full"
               />
 
-              <div className="flex justify-between text-[10px] font-semibold text-slate-600 uppercase tracking-wider mt-1.5">
+              <div className="flex justify-between text-[10px] text-[#555] uppercase tracking-widest mt-2 font-medium">
                 <span>{low}</span>
                 <span>{mid}</span>
                 <span>{high}</span>
@@ -98,17 +96,19 @@ export function ValueLevers({ levers, onChange, previewPrice, valueMultiplier }:
       </div>
 
       {previewPrice !== undefined && valueMultiplier !== undefined && (
-        <div className="mt-4 bg-gradient-to-r from-violet-600/20 to-violet-800/10 border border-violet-500/30 rounded-2xl p-4 flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full bg-violet-500/20 flex items-center justify-center shrink-0">
-            <TrendingUp size={18} className="text-violet-400" />
+        <div
+          className="mt-8 pt-6 flex items-end justify-between price-reveal"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+        >
+          <div>
+            <div className="text-[10px] text-[#666] uppercase tracking-widest mb-2 font-medium">Precio estimado</div>
+            <div className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
+              {formatCurrency(previewPrice)}
+            </div>
           </div>
-          <div className="flex-1">
-            <div className="text-xs text-violet-400 font-semibold uppercase tracking-widest mb-0.5">Precio estimado</div>
-            <div className="text-2xl font-bold text-white">{formatCurrency(previewPrice)}</div>
-          </div>
-          <div className="text-right shrink-0">
-            <div className="text-xs text-slate-500 uppercase tracking-widest mb-0.5">Multiplicador</div>
-            <div className="text-xl font-bold text-violet-300">×{valueMultiplier}</div>
+          <div className="text-right">
+            <div className="text-[10px] text-[#666] uppercase tracking-widest mb-2 font-medium">Multiplicador</div>
+            <div className="text-2xl font-light text-[#888] tracking-tight">×{valueMultiplier}</div>
           </div>
         </div>
       )}

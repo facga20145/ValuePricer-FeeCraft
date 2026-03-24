@@ -23,7 +23,6 @@ const INITIAL_STATE: CalculatorState = {
   },
 }
 
-
 export default function App() {
   const [state, setState] = useState<CalculatorState>(INITIAL_STATE)
   const [currentStep, setCurrentStep] = useState(0)
@@ -58,51 +57,50 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(109,40,217,0.25) 0%, #0f1117 60%)' }}>
+    <div className="min-h-screen bg-[#080808] flex flex-col">
       <TopNav
         currentStep={currentStep}
         onStepClick={setCurrentStep}
         completedSteps={completedSteps}
       />
 
-      <main className="flex-1 px-3 sm:px-4 py-4 sm:py-8">
+      <main className="flex-1 px-3 sm:px-6 py-6 sm:py-12">
         <div className="max-w-4xl mx-auto">
 
           {history.length > 0 && (
             <div className="flex justify-end mb-4">
               <button
                 onClick={() => setShowHistory((v) => !v)}
-                className="flex items-center gap-2 text-xs bg-white/[0.06] hover:bg-white/[0.1] text-slate-300 hover:text-white px-3 py-1.5 rounded-full transition-all border border-white/[0.08]"
+                className="text-xs text-[#555] hover:text-[#999] transition-colors"
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-violet-400 shrink-0" />
-                {showHistory ? 'Cerrar historial' : `Historial (${history.length})`}
+                {showHistory ? 'cerrar historial' : `historial (${history.length})`}
               </button>
             </div>
           )}
 
           {showHistory && (
-            <div className="bg-white/[0.04] border border-white/[0.08] rounded-2xl p-4 mb-6">
+            <div className="bg-[#111] border border-[#222] rounded-lg p-4 mb-6">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-white">Cotizaciones recientes</h3>
+                <span className="text-xs text-[#555] uppercase tracking-widest">Recientes</span>
                 <button
                   onClick={() => { clearHistory(); setHistory([]); setShowHistory(false) }}
-                  className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                  className="text-xs text-[#555] hover:text-red-400 transition-colors"
                 >
-                  Borrar todo
+                  borrar
                 </button>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {history.map((quote) => (
                   <button
                     key={quote.id}
                     onClick={() => handleLoadQuote(quote)}
-                    className="w-full text-left flex justify-between items-center px-3 py-2.5 rounded-lg hover:bg-white/[0.06] transition-colors"
+                    className="w-full text-left flex justify-between items-center px-2 py-2 rounded hover:bg-white/[0.03] transition-colors"
                   >
                     <div>
-                      <div className="text-sm font-medium text-white">{quote.projectName}</div>
-                      <div className="text-xs text-slate-500">{quote.date}</div>
+                      <div className="text-sm text-[#ccc]">{quote.projectName}</div>
+                      <div className="text-xs text-[#444]">{quote.date}</div>
                     </div>
-                    <div className="text-sm font-bold text-violet-400">
+                    <div className="text-sm font-semibold text-white">
                       {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(quote.suggestedPrice)}
                     </div>
                   </button>
@@ -111,89 +109,88 @@ export default function App() {
             </div>
           )}
 
-          <div className="bg-white/[0.03] backdrop-blur-sm border border-white/[0.08] rounded-2xl sm:rounded-3xl p-3 sm:p-6 lg:p-8" style={{ boxShadow: '0 0 60px rgba(109,40,217,0.08), inset 0 1px 0 rgba(255,255,255,0.06)' }}>
+          <div
+            className="rounded-xl p-4 sm:p-8"
+            style={{
+              background: '#141414',
+              border: '1px solid rgba(255,255,255,0.1)',
+              boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.05), 0 20px 60px rgba(0,0,0,0.5)',
+            }}
+          >
             <ProgressBar currentStep={currentStep} totalSteps={4} />
-
             <div key={currentStep} className="step-enter">
-
-            {currentStep === 0 && (
-              <ProjectTypeSelector
-                selected={state.projectType}
-                onSelect={(type: ProjectType) => {
-                  setState((s) => ({ ...s, projectType: type }))
-                  setTimeout(() => setCurrentStep(1), 320)
-                }}
-              />
-            )}
-
-            {currentStep === 1 && (
-              <HoursEstimator
-                hours={state.estimatedHours}
-                riskBuffer={state.riskBuffer}
-                onHoursChange={(h) => setState((s) => ({ ...s, estimatedHours: h }))}
-                onBufferChange={(b) => setState((s) => ({ ...s, riskBuffer: b }))}
-              />
-            )}
-
-            {currentStep === 2 && (
-              <ValueLeversComponent
-                levers={state.valueLevers}
-                onChange={(levers: ValueLevers) => setState((s) => ({ ...s, valueLevers: levers }))}
-                previewPrice={result?.suggestedPrice}
-                valueMultiplier={result?.valueMultiplier}
-              />
-            )}
-
-            {currentStep === 3 && result && (
-              <PriceSummary result={result} state={state} onSave={handleSave} />
-            )}
-
+              {currentStep === 0 && (
+                <ProjectTypeSelector
+                  selected={state.projectType}
+                  onSelect={(type: ProjectType) => {
+                    setState((s) => ({ ...s, projectType: type }))
+                    setTimeout(() => setCurrentStep(1), 300)
+                  }}
+                />
+              )}
+              {currentStep === 1 && (
+                <HoursEstimator
+                  hours={state.estimatedHours}
+                  riskBuffer={state.riskBuffer}
+                  onHoursChange={(h) => setState((s) => ({ ...s, estimatedHours: h }))}
+                  onBufferChange={(b) => setState((s) => ({ ...s, riskBuffer: b }))}
+                />
+              )}
+              {currentStep === 2 && (
+                <ValueLeversComponent
+                  levers={state.valueLevers}
+                  onChange={(levers: ValueLevers) => setState((s) => ({ ...s, valueLevers: levers }))}
+                  previewPrice={result?.suggestedPrice}
+                  valueMultiplier={result?.valueMultiplier}
+                />
+              )}
+              {currentStep === 3 && result && (
+                <PriceSummary result={result} state={state} onSave={handleSave} />
+              )}
             </div>
           </div>
 
-          <div className="flex items-center justify-between mt-6 px-1 pb-24 sm:pb-0">
+          <div className="flex items-center justify-between mt-4 px-1 pb-24 sm:pb-0">
             {currentStep > 0 ? (
               <button
                 onClick={() => setCurrentStep((s) => s - 1)}
-                className="flex items-center gap-2 px-5 py-3 rounded-full bg-white/[0.06] text-slate-300 text-sm font-medium hover:bg-white/[0.1] transition-all"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-[#555] hover:text-[#999] transition-colors"
               >
-                <ArrowLeft size={16} />
+                <ArrowLeft size={14} />
                 Atrás
               </button>
-            ) : (
-              <div />
-            )}
+            ) : <div />}
 
-            <span className="text-xs text-slate-600 font-medium">
-              {currentStep < 3 ? `PASO ${currentStep + 1} DE 4` : ''}
+            <span className="text-xs text-[#333] tracking-widest">
+              {currentStep < 3 ? `${currentStep + 1} / 4` : ''}
             </span>
 
             {currentStep < 3 ? (
               <button
                 onClick={() => setCurrentStep((s) => s + 1)}
                 disabled={!canAdvance()}
-                className="flex items-center gap-2 px-6 py-3 rounded-full bg-violet-500 text-white text-sm font-semibold hover:bg-violet-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                className="flex items-center gap-2 px-5 py-2 rounded-lg bg-white text-black text-sm font-semibold hover:bg-white/90 disabled:opacity-20 disabled:cursor-not-allowed transition-all"
               >
                 Siguiente
-                <ArrowRight size={16} />
+                <ArrowRight size={14} />
               </button>
             ) : (
               <button
                 onClick={reset}
-                className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.06] text-slate-300 text-sm font-semibold hover:bg-white/[0.1] transition-all"
+                className="flex items-center gap-2 px-5 py-2 rounded-lg border border-[#2a2a2a] text-[#888] text-sm hover:border-[#444] hover:text-white transition-all"
               >
                 Nueva cotización
               </button>
             )}
           </div>
 
-          <div className="fixed sm:hidden bottom-0 left-0 right-0 px-4 pb-6 pt-3 bg-[#0f1117]/90 backdrop-blur border-t border-white/[0.06] flex items-center justify-between gap-3 z-50">
+          <div className="fixed sm:hidden bottom-0 left-0 right-0 px-4 pb-6 pt-3 bg-[#0a0a0a]/95 backdrop-blur border-t border-[#1a1a1a] flex items-center justify-between gap-3 z-50">
             {currentStep > 0 ? (
               <button
                 onClick={() => setCurrentStep((s) => s - 1)}
-                className="flex items-center gap-2 px-5 py-3 rounded-full bg-white/[0.06] text-slate-300 text-sm font-medium hover:bg-white/[0.1] transition-all"
+                className="flex items-center gap-2 px-4 py-2.5 text-sm text-[#555]"
               >
-                <ArrowLeft size={16} />
+                <ArrowLeft size={14} />
                 Atrás
               </button>
             ) : <div />}
@@ -202,15 +199,15 @@ export default function App() {
               <button
                 onClick={() => setCurrentStep((s) => s + 1)}
                 disabled={!canAdvance()}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-violet-500 text-white text-sm font-semibold hover:bg-violet-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg bg-white text-black text-sm font-semibold disabled:opacity-20 disabled:cursor-not-allowed transition-all"
               >
                 Siguiente
-                <ArrowRight size={16} />
+                <ArrowRight size={14} />
               </button>
             ) : (
               <button
                 onClick={reset}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-white/[0.06] text-slate-300 text-sm font-semibold hover:bg-white/[0.1] transition-all"
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-[#2a2a2a] text-[#888] text-sm"
               >
                 Nueva cotización
               </button>
