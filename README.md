@@ -1,73 +1,74 @@
-# React + TypeScript + Vite
+# ValuePricer — FeeCraft
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Calculadora de tarifas basada en valor para freelancers y consultores. No calcula por horas — calcula por el valor real que entregas al cliente.
 
-Currently, two official plugins are available:
+## El problema
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+La mayoría de los freelancers cotizan multiplicando horas × tarifa. Eso los pone en desventaja: el cliente negocia el tiempo, no el valor. Un proyecto que le genera $100k a un cliente no debería costar lo mismo que uno que le genera $5k, aunque ambos tarden 40 horas.
 
-## React Compiler
+## Cómo funciona
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+ValuePricer usa una fórmula de precio basada en cuatro palancas de valor:
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```
+Precio = (Horas × Tarifa Base × Buffer de Riesgo) × Multiplicador de Valor
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+El **Multiplicador de Valor** se calcula a partir de:
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+| Factor | Peso | Descripción |
+|---|---|---|
+| Impacto al negocio | 35% | Cuánto dinero genera o ahorra el proyecto |
+| Valor estratégico | 30% | Si es crítico o solo nice-to-have |
+| Urgencia | 20% | Qué tan pronto lo necesita el cliente |
+| Exclusividad | 15% | Si cualquiera puede hacerlo o eres la persona indicada |
 
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+El multiplicador va de **×0.8x** (proyecto de bajo impacto) hasta **×3.0x** (proyecto crítico y urgente). El resultado incluye un rango de negociación (±15%) para que el freelancer tenga margen sin comprometer su rentabilidad mínima.
+
+## Stack
+
+- React 19 + TypeScript + Vite
+- Tailwind CSS v4
+- jsPDF (exportación de cotizaciones en PDF)
+- localStorage (historial de cotizaciones, sin backend)
+
+## Funcionalidades actuales
+
+- 6 tipos de proyecto con tarifas base diferenciadas
+- Estimación de horas con buffer de riesgo configurable (0% — 50%)
+- 4 palancas de valor ajustables con sliders
+- Precio sugerido + rango de negociación
+- Exportación a PDF con desglose completo
+- Copia de propuesta en texto plano
+- Historial de las últimas 5 cotizaciones (localStorage)
+- Diseño responsivo, dark mode
+
+## Instalación
+
+```bash
+pnpm install
+pnpm dev
 ```
+
+## Demo
+
+[facga20145.github.io/ValuePricer-FeeCraft](https://facga20145.github.io/ValuePricer-FeeCraft/)
+
+---
+
+## Roadmap
+
+### v2.0 — Con backend (en desarrollo)
+
+La versión actual es 100% frontend y funciona sin servidor. La siguiente versión conectará con una API REST para:
+
+- Historial de cotizaciones en la nube (sincronizado entre dispositivos)
+- Gestión de clientes y proyectos
+- Plantillas de cotización reutilizables
+- Autenticación de usuarios
+- Panel de analytics (proyectos cotizados, tasa de cierre, ingresos estimados)
+- API key segura para el generador de propuestas con IA
+
+Stack planeado para el back: Node.js + Express + PostgreSQL + JWT.
+
+**Proximamente.**
