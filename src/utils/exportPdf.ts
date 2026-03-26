@@ -2,192 +2,165 @@ import { jsPDF } from 'jspdf'
 import type { CalculatorState, PriceResult } from '../types'
 import { formatCurrency } from './calculator'
 
+const BLACK  = [10, 10, 10]   as const
+const DARK   = [30, 30, 30]   as const
+const MID    = [100, 100, 100] as const
+const LIGHT  = [180, 180, 180] as const
+const RULE   = [220, 220, 220] as const
+
+function rule(doc: jsPDF, y: number, x1 = 20, x2 = 190) {
+  doc.setDrawColor(...RULE)
+  doc.setLineWidth(0.25)
+  doc.line(x1, y, x2, y)
+}
+
+function label(doc: jsPDF, text: string, x: number, y: number) {
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(7.5)
+  doc.setTextColor(...LIGHT)
+  doc.text(text.toUpperCase(), x, y)
+}
+
+function value(doc: jsPDF, text: string, x: number, y: number, align: 'left' | 'right' = 'left') {
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(9)
+  doc.setTextColor(...DARK)
+  doc.text(text, x, y, { align })
+}
+
 export function exportToPdf(state: CalculatorState, result: PriceResult) {
   const doc = new jsPDF({ unit: 'mm', format: 'a4' })
   const { projectType, estimatedHours, riskBuffer, valueLevers } = state
   const { suggestedPrice, minPrice, maxPrice, basePrice, valueMultiplier, breakdown } = result
-
   const totalHours = estimatedHours * (1 + riskBuffer / 100)
+  const date = new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
 
-  const violet = [109, 40, 217] as const
-  const violetLight = [139, 92, 246] as const
-  const gray = [107, 114, 128] as const
-  const dark = [17, 24, 39] as const
-  const white = [255, 255, 255] as const
+  doc.setFillColor(255, 255, 255)
+  doc.rect(0, 0, 210, 297, 'F')
 
-  doc.setFillColor(...violet)
-  doc.rect(0, 0, 210, 46, 'F')
-
-  doc.setFillColor(...violetLight)
-  doc.rect(0, 38, 210, 8, 'F')
-
-  doc.setTextColor(...white)
-  doc.setFontSize(24)
   doc.setFont('helvetica', 'bold')
-  doc.text('ValuePricer', 20, 20)
+  doc.setFontSize(13)
+  doc.setTextColor(...BLACK)
+  doc.text('ValuePricer', 20, 22)
 
-  doc.setFontSize(9)
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(196, 181, 253)
-  doc.text('FeeCraft — Precio basado en valor, no en horas', 20, 28)
-  doc.text(`Generado el ${new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}`, 20, 35)
-
-  doc.setTextColor(...white)
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
-  doc.text(projectType!.name.toUpperCase(), 155, 28, { align: 'right' })
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8)
-  doc.setTextColor(196, 181, 253)
-  doc.text(`$${projectType!.baseHourlyRate}/h base`, 155, 35, { align: 'right' })
+  doc.setTextColor(...MID)
+  doc.text(`Fecha: ${date}`, 190, 22, { align: 'right' })
 
-  doc.setFillColor(245, 243, 255)
-  doc.roundedRect(15, 54, 180, 36, 5, 5, 'F')
-  doc.setDrawColor(...violetLight)
-  doc.roundedRect(15, 54, 180, 36, 5, 5, 'S')
+  rule(doc, 28)
 
-  doc.setTextColor(...violet)
-  doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
-  doc.text('PRECIO SUGERIDO', 25, 64)
+  doc.setFontSize(8)
+  doc.setTextColor(...LIGHT)
+  doc.text('COTIZACIÓN', 20, 38)
+  doc.text(projectType!.name.toUpperCase(), 190, 38, { align: 'right' })
 
-  doc.setFontSize(26)
   doc.setFont('helvetica', 'bold')
-  doc.text(formatCurrency(suggestedPrice), 25, 79)
+  doc.setFontSize(34)
+  doc.setTextColor(...BLACK)
+  doc.text(formatCurrency(suggestedPrice), 20, 55)
 
-  doc.setFontSize(9)
   doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...gray)
-  doc.text('Rango de negociación', 125, 64)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...dark)
-  doc.text(`${formatCurrency(minPrice)} — ${formatCurrency(maxPrice)}`, 125, 72)
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...violet)
-  doc.text(`Multiplicador ×${valueMultiplier}`, 125, 80)
+  doc.setFontSize(8.5)
+  doc.setTextColor(...MID)
+  doc.text(`Rango  ${formatCurrency(minPrice)} — ${formatCurrency(maxPrice)}`, 20, 63)
+  doc.text(`Multiplicador ×${valueMultiplier}`, 190, 63, { align: 'right' })
 
-  let y = 104
-  doc.setTextColor(...dark)
-  doc.setFontSize(11)
-  doc.setFont('helvetica', 'bold')
-  doc.text('Desglose del precio', 15, y)
-  doc.setDrawColor(229, 231, 235)
-  doc.line(15, y + 4, 195, y + 4)
+  rule(doc, 72)
 
-  y += 14
-  doc.setFontSize(9)
+  let y = 84
+
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(8)
+  doc.setTextColor(...BLACK)
+  doc.text('DESGLOSE', 20, y - 6)
 
   breakdown.forEach((item) => {
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(...gray)
-    doc.text(item.label, 15, y)
-
-    const amountStr = `${item.isMultiplier && item.amount > 0 ? '+' : ''}${formatCurrency(item.amount)}`
+    label(doc, item.label, 20, y)
+    const amount = `${item.isMultiplier && item.amount > 0 ? '+' : ''}${formatCurrency(item.amount)}`
     doc.setFont('helvetica', 'bold')
-
-    if (item.isMultiplier && item.amount > 0) {
-      doc.setTextColor(22, 163, 74)
-    } else if (item.isMultiplier && item.amount < 0) {
-      doc.setTextColor(220, 38, 38)
-    } else {
-      doc.setTextColor(...dark)
-    }
-
-    doc.text(amountStr, 195, y, { align: 'right' })
-    y += 9
+    doc.setFontSize(9)
+    doc.setTextColor(item.isMultiplier && item.amount > 0 ? 50 : 30, 30, 30)
+    doc.text(amount, 190, y, { align: 'right' })
+    y += 10
   })
 
-  doc.setDrawColor(229, 231, 235)
-  doc.line(15, y, 195, y)
+  rule(doc, y)
   y += 7
 
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...dark)
-  doc.text('Total sugerido', 15, y)
-  doc.setTextColor(...violet)
-  doc.text(formatCurrency(suggestedPrice), 195, y, { align: 'right' })
+  doc.setFontSize(10)
+  doc.setTextColor(...BLACK)
+  doc.text('Total', 20, y)
+  doc.text(formatCurrency(suggestedPrice), 190, y, { align: 'right' })
 
   y += 18
-  doc.setTextColor(...dark)
-  doc.setFontSize(11)
+  rule(doc, y - 6)
+
   doc.setFont('helvetica', 'bold')
-  doc.text('Estimación de horas', 15, y)
-  doc.setDrawColor(229, 231, 235)
-  doc.line(15, y + 4, 195, y + 4)
+  doc.setFontSize(8)
+  doc.setTextColor(...BLACK)
+  doc.text('HORAS', 20, y)
 
-  y += 14
-  doc.setFontSize(9)
-
-  const hoursData = [
-    ['Horas estimadas', `${estimatedHours}h`],
+  y += 10
+  const hoursRows = [
+    ['Estimadas', `${estimatedHours}h`],
     ['Buffer de riesgo', `+${riskBuffer}%`],
     ['Total con buffer', `${totalHours.toFixed(1)}h`],
-  ]
-  const rateData = [
     ['Tarifa base', `$${projectType!.baseHourlyRate}/h`],
-    ['Precio base (tiempo)', formatCurrency(basePrice)],
+    ['Coste base (tiempo)', formatCurrency(basePrice)],
   ]
 
-  hoursData.forEach((row, i) => {
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(...gray)
-    doc.text(row[0], 15, y + i * 8)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...dark)
-    doc.text(row[1], 80, y + i * 8)
+  hoursRows.forEach((row) => {
+    label(doc, row[0], 20, y)
+    value(doc, row[1], 190, y, 'right')
+    y += 9
   })
 
-  rateData.forEach((row, i) => {
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(...gray)
-    doc.text(row[0], 110, y + i * 8)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...dark)
-    doc.text(row[1], 195, y + i * 8, { align: 'right' })
-  })
+  y += 8
+  rule(doc, y - 4)
 
-  y += 32
-  doc.setTextColor(...dark)
-  doc.setFontSize(11)
   doc.setFont('helvetica', 'bold')
-  doc.text('Value Levers', 15, y)
-  doc.setDrawColor(229, 231, 235)
-  doc.line(15, y + 4, 195, y + 4)
+  doc.setFontSize(8)
+  doc.setTextColor(...BLACK)
+  doc.text('FACTORES DE VALOR', 20, y + 4)
 
   y += 14
-  const leversData = [
-    { label: 'Impacto al negocio', value: valueLevers.businessImpact },
-    { label: 'Valor estratégico', value: valueLevers.strategicValue },
-    { label: 'Urgencia', value: valueLevers.urgency },
-    { label: 'Exclusividad', value: valueLevers.exclusivity },
+  const levers = [
+    { label: 'Impacto al negocio', v: valueLevers.businessImpact },
+    { label: 'Valor estratégico',  v: valueLevers.strategicValue },
+    { label: 'Urgencia',           v: valueLevers.urgency },
+    { label: 'Exclusividad',       v: valueLevers.exclusivity },
   ]
 
-  doc.setFontSize(9)
-  leversData.forEach((lever, i) => {
-    const col = i % 2 === 0 ? 15 : 110
-    const row = y + Math.floor(i / 2) * 18
-
+  levers.forEach((lever) => {
     doc.setFont('helvetica', 'normal')
-    doc.setTextColor(...gray)
-    doc.text(lever.label, col, row)
+    doc.setFontSize(8)
+    doc.setTextColor(...MID)
+    doc.text(lever.label, 20, y)
 
-    const barWidth = 72
-    doc.setFillColor(229, 231, 235)
-    doc.roundedRect(col, row + 3, barWidth, 4, 2, 2, 'F')
-    doc.setFillColor(...violet)
-    doc.roundedRect(col, row + 3, (barWidth * lever.value) / 5, 4, 2, 2, 'F')
+    doc.setFillColor(...RULE)
+    doc.rect(80, y - 3, 90, 2, 'F')
+
+    doc.setFillColor(...DARK)
+    doc.rect(80, y - 3, (90 * lever.v) / 5, 2, 'F')
 
     doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...violet)
-    doc.text(`${lever.value}/5`, col + barWidth + 4, row + 6)
+    doc.setFontSize(8)
+    doc.setTextColor(...DARK)
+    doc.text(`${lever.v}/5`, 190, y, { align: 'right' })
+
+    y += 10
   })
 
-  doc.setFillColor(245, 243, 255)
-  doc.rect(0, 277, 210, 20, 'F')
-  doc.setFontSize(8)
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...gray)
-  doc.text('Generado con ValuePricer · FeeCraft — precio basado en valor, no en horas', 105, 287, { align: 'center' })
+  rule(doc, 278)
 
-  doc.save(`cotizacion-${projectType!.name.toLowerCase().replace(/\s/g, '-')}.pdf`)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(7.5)
+  doc.setTextColor(...LIGHT)
+  doc.text('ValuePricer · FeeCraft', 20, 285)
+  doc.text('Precio basado en valor, no en horas', 190, 285, { align: 'right' })
+
+  doc.save(`cotizacion-${projectType!.name.toLowerCase().replace(/\s+/g, '-')}.pdf`)
 }
