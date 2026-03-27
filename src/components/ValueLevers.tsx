@@ -47,7 +47,7 @@ export function ValueLevers({ levers, onChange, previewPrice, valueMultiplier }:
   return (
     <div className="max-w-lg mx-auto">
       <h2 className="text-2xl sm:text-3xl font-bold text-white mb-1.5 tracking-tight">Valor entregado</h2>
-      <p className="text-[#555] text-sm mb-8 font-light">
+      <p className="text-[#888] text-sm mb-8 font-light">
         Ajusta el precio más allá del tiempo invertido.
       </p>
 
@@ -61,10 +61,10 @@ export function ValueLevers({ levers, onChange, previewPrice, valueMultiplier }:
               <div className="flex justify-between items-baseline mb-3">
                 <div>
                   <span className="text-sm font-semibold text-[#ccc] tracking-tight">{label}</span>
-                  <span className="hidden sm:inline text-xs text-[#666] ml-2 font-light">{description}</span>
+                  <span className="hidden sm:inline text-xs text-[#888] ml-2 font-light">{description}</span>
                 </div>
                 <span
-                  className="text-xs text-[#777] shrink-0 ml-3 tabular-nums"
+                  className="text-xs text-[#999] shrink-0 ml-3 tabular-nums"
                   style={{ transition: 'all 0.2s ease' }}
                 >
                   {LEVEL_LABEL[val]}
@@ -85,7 +85,7 @@ export function ValueLevers({ levers, onChange, previewPrice, valueMultiplier }:
                 className="w-full"
               />
 
-              <div className="flex justify-between text-[10px] text-[#555] uppercase tracking-widest mt-2 font-medium">
+              <div className="flex justify-between text-[10px] text-[#666] uppercase tracking-widest mt-2 font-medium">
                 <span>{low}</span>
                 <span>{mid}</span>
                 <span>{high}</span>
@@ -101,14 +101,14 @@ export function ValueLevers({ levers, onChange, previewPrice, valueMultiplier }:
           style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
         >
           <div>
-            <div className="text-[10px] text-[#666] uppercase tracking-widest mb-2 font-medium">Precio estimado</div>
+            <div className="text-[10px] text-[#888] uppercase tracking-widest mb-2 font-medium">Precio estimado</div>
             <div className="text-3xl sm:text-4xl font-bold text-white tracking-tight">
               {formatCurrency(previewPrice)}
             </div>
           </div>
           <div className="text-right">
-            <div className="text-[10px] text-[#666] uppercase tracking-widest mb-2 font-medium">Multiplicador</div>
-            <div className="text-2xl font-light text-[#888] tracking-tight">×{valueMultiplier}</div>
+            <div className="text-[10px] text-[#888] uppercase tracking-widest mb-2 font-medium">Multiplicador</div>
+            <div className="text-2xl font-light text-[#aaa] tracking-tight">×{valueMultiplier}</div>
           </div>
         </div>
       )}

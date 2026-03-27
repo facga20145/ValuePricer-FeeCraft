@@ -22,7 +22,7 @@ export function ProjectTypeSelector({ selected, onSelect }: Props) {
       <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2 tracking-tight leading-tight">
         Tipo de proyecto
       </h1>
-      <p className="text-[#666] text-sm mb-8 font-light">
+      <p className="text-[#888] text-sm mb-8 font-light">
         Selecciona el que mejor describe el trabajo.
       </p>
 
@@ -46,15 +46,15 @@ export function ProjectTypeSelector({ selected, onSelect }: Props) {
             >
               <Icon
                 size={17}
-                className={`mb-3.5 transition-colors duration-150 ${isSelected ? 'text-white' : 'text-[#444]'}`}
+                className={`mb-3.5 transition-colors duration-150 ${isSelected ? 'text-white' : 'text-[#666]'}`}
               />
               <div className={`font-semibold text-sm mb-1 tracking-tight ${isSelected ? 'text-white' : 'text-[#bbb]'}`}>
                 {type.name}
               </div>
-              <div className="text-xs text-[#555] mb-3 hidden sm:block leading-relaxed font-light">
+              <div className="text-xs text-[#777] mb-3 hidden sm:block leading-relaxed font-light">
                 {type.description}
               </div>
-              <div className={`text-xs font-medium ${isSelected ? 'text-white/60' : 'text-[#444]'}`}>
+              <div className={`text-xs font-medium ${isSelected ? 'text-white/70' : 'text-[#666]'}`}>
                 ${type.baseHourlyRate}/h
               </div>
             </button>
